@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Excel and Display Graph</title>
+</head>
+<body>
+    <h1>Upload an Excel file</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="data" accept=".xlsx">
+        <button type="submit">Upload</button>
+    </form>
+
+    <h2>Graph</h2>
+    <img src="{{ url_for('static', filename='graph.png') }}" alt="Graph">
+</body>
+</html>

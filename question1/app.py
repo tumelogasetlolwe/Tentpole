@@ -1,0 +1,42 @@
+from flask import Flask, render_template, request
+import os
+import tempfile
+import pandas as pd
+import matplotlib.pyplot as plt
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    dob = request.form['dob']
+    excel_file = request.files['excel_file']
+
+    # Save the uploaded Excel file temporarily
+    temp_dir = tempfile.mkdtemp()
+    excel_path = os.path.join(temp_dir, 'data.xlsx')
+    excel_file.save(excel_path)
+
+    # Read Excel data using pandas
+    df = pd.read_excel(excel_path)
+
+    # Generate graph using Matplotlib
+    plt.plot(df['Month'], df['Income'], label='Income')
+    plt.plot(df['Month'], df['Expenses'], label='Expenses')
+    plt.xlabel('Month')
+    plt.ylabel('Amount')
+    plt.title('Customer Financial Overview')
+    plt.legend()
+    graph_path = os.path.join(temp_dir, 'graph.png')
+    plt.savefig(graph_path)
+    plt.close()
+
+    return render_template('result.html', first_name=first_name, last_name=last_name, dob=dob, graph_path=graph_path)
+
+if __name__ == '__main__':
+    app.run(debug=True)
